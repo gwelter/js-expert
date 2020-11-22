@@ -1,17 +1,17 @@
-const { readFile } = require('fs/promises');
-const { error } = require('./constants');
+const { readFile } = require("fs/promises");
+const { error } = require("./constants");
 
-const User = require('./user')
+const User = require("./user");
 
 const DEFAULT_OPTIONS = {
   maxLines: 3,
-  fields: ["id","name","profession","age"]
-}
+  fields: ["id", "name", "profession", "age"],
+};
 
 class File {
   static async csvToJson(filePath) {
-    const content = await File.getFileContent(filePath)
-    const validations = await File.isValid(content)
+    const content = await File.getFileContent(filePath);
+    const validations = await File.isValid(content);
     if (!validations.valid) throw new Error(validations.error);
 
     const users = File.parseCsvToJson(content);
@@ -23,44 +23,43 @@ class File {
   }
 
   static isValid(csvString, options = DEFAULT_OPTIONS) {
-    const [header, ...fileWithoutHeader] = csvString.split('\n')
-    const isHeaderValid = header === options.fields.join(',')
+    const [header, ...fileWithoutHeader] = csvString.split("\n");
+    const isHeaderValid = header === options.fields.join(",");
     if (!isHeaderValid) {
       return {
         error: error.FILE_FIELDS_ERROR_MESSAGE,
-        valid: false
-      }
+        valid: false,
+      };
     }
 
-    const isContentLengthAccepted = (
+    const isContentLengthAccepted =
       fileWithoutHeader.length > 0 &&
-      fileWithoutHeader.length <= options.maxLines
-    )
+      fileWithoutHeader.length <= options.maxLines;
     if (!isContentLengthAccepted) {
       return {
         error: error.FILE_LENGTH_ERROR_MESSAGE,
-        valid: false
-      }
+        valid: false,
+      };
     }
 
-    return { valid: true }
+    return { valid: true };
   }
 
   static parseCsvToJson(csvString) {
-    const lines = csvString.split('\n');
+    const lines = csvString.split("\n");
     // remove o primeiro item e salva
-    const firstLine = lines.shift()
-    const header = firstLine.split(',')
-    const users = lines.map(line => {
-      const columns = line.split(',')
-      let user = {}
+    const firstLine = lines.shift();
+    const header = firstLine.split(",");
+    const users = lines.map((line) => {
+      const columns = line.split(",");
+      let user = {};
       for (const index in columns) {
-        user[header[index]] = columns[index]
+        user[header[index]] = columns[index];
       }
-      return new User(user)
-    })
-    return users
+      return new User(user);
+    });
+    return users;
   }
 }
 
-module.exports = File
+module.exports = File;
