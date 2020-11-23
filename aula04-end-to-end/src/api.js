@@ -1,9 +1,27 @@
 const http = require("http");
+const DEFAULT_USER = { username: "gwelter", password: "123" };
 
 const routes = {
   "/contacts:get": (request, response) => {
     response.write("Contacts Page!");
     return response.end();
+  },
+  "/login:post": async (request, response) => {
+    for await (const data of request) {
+      const user = JSON.parse(data);
+      if (
+        user.username !== DEFAULT_USER.username ||
+        user.password !== DEFAULT_USER.password
+      ) {
+        response.writeHead(401);
+        response.write("Login failed!");
+        return response.end();
+      }
+
+      response.writeHead(200);
+      response.write("Login succeeded!");
+      return response.end();
+    }
   },
   default: (request, response) => {
     response.write("Hello World!");

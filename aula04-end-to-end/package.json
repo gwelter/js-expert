@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx mocha -w src/*.test.js"
+    "test": "npx mocha -w --parallel src/*.test.js",
+    "test:cov": "npx nyc npx mocha --parallel src/*.test.js"
   },
   "keywords": [],
   "author": "",
