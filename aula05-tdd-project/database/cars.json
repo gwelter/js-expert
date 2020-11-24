@@ -1,0 +1,16 @@
+[
+  {
+    "id": "426c3de3-ce25-49b6-b4c0-135c7ea6237b",
+    "name": "Spyder",
+    "releaseYear": 2020,
+    "available": true,
+    "gasAvailable": true
+  },
+  {
+    "id": "26417633-0bb8-46cc-adb6-0e608e20962f",
+    "name": "Colorado",
+    "releaseYear": 2020,
+    "available": true,
+    "gasAvailable": true
+  }
+]
