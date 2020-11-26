@@ -12,7 +12,7 @@ const ITEMS_AMOUNT = 2;
 const carCategory = new CarCategory({
   id: faker.random.uuid(),
   name: faker.vehicle.type(),
-  cardIds: [],
+  carIds: [],
   price: faker.finance.amount(20, 100),
 });
 
@@ -26,7 +26,7 @@ for (let index = 0; index < ITEMS_AMOUNT; index++) {
     gasAvailable: true,
     releaseYear: faker.date.past().getFullYear(),
   });
-  carCategory.cardIds.push(car.id);
+  carCategory.carIds.push(car.id);
   cars.push(car);
 
   const customer = new Customer({
