@@ -2,7 +2,8 @@ const sinon = require("sinon");
 const { join } = require("path");
 const { expect } = require("chai");
 const { describe, it, before, beforeEach, afterEach } = require("mocha");
-const CarService = require("../../src/service/cartService");
+const Transaction = require("../../src/entities/transaction");
+const CarService = require("../../src/service/carService");
 
 const carsDatabase = join(__dirname, "../../database", "cars.json");
 const mocks = {
@@ -35,7 +36,6 @@ describe("CarService Suite Test", () => {
 
   it("should choose the first id from carIds in carCategory", () => {
     const carCategory = mocks.validCategory;
-    console.log({ carCategory });
     const carIdIndex = 0;
 
     sandbox
@@ -65,6 +65,63 @@ describe("CarService Suite Test", () => {
 
     expect(carService.chooseRandomCar.calledOnce).to.be.ok;
     expect(carService.carRepository.find.calledWithExactly(car.id)).to.be.ok;
+    expect(result).to.be.deep.equal(expected);
+  });
+
+  it("given a car category, customer and numberOfDays it should calculate the final amount in BRL", async () => {
+    const customer = Object.create(mocks.validCustomer);
+    customer.age = 50;
+
+    const carCategory = Object.create(mocks.validCategory);
+    carCategory.price = 37.6;
+
+    const numberOfDays = 5;
+
+    sandbox
+      .stub(carService, "taxesBasedOnAge")
+      .get(() => [{ from: 40, to: 50, then: 1.3 }]);
+
+    const expected = carService.currencyFormat.format(244.4);
+    const result = carService.calculateFinalPrice(
+      customer,
+      carCategory,
+      numberOfDays
+    );
+
+    expect(result).to.be.deep.equal(expected);
+  });
+
+  it("given a customer and a car category it should return a transaction receipt", async () => {
+    const car = mocks.validCar;
+    const carCategory = {
+      ...mocks.validCategory,
+      price: 37.6,
+      carIds: [car.id],
+    };
+    const customer = Object.create(mocks.validCustomer);
+    customer.age = 20;
+
+    const numberOfDays = 5;
+    const dueDate = "10 de novembro de 2020";
+
+    sandbox
+      .stub(carService.carRepository, carService.carRepository.find.name)
+      .resolves(car);
+
+    const now = new Date(2020, 10, 5);
+    sandbox.useFakeTimers(now.getTime());
+    // age: 20, tax: 1.1, categoryPrice: 37.6
+    // 37.6 * 1.1 = 41.36 * 5 days = 206.8
+    const expectedAmount = carService.currencyFormat.format(206.8);
+    const result = await carService.rend(customer, carCategory, numberOfDays);
+
+    const expected = new Transaction({
+      customer,
+      car,
+      amount: expectedAmount,
+      dueDate,
+    });
+
     expect(result).to.be.deep.equal(expected);
   });
 });
