@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "test": "npx mocha -w *.test.js --parallel"
+    "test": "npx mocha -w --parallel *.test.js",
+    "test:cov": "npx nyc npx mocha --parallel *.test.js"
   },
   "devDependencies": {
     "mocha": "^8.4.0",
