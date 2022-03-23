@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "test": "npx mocha -w *.test.js --parallel"
+  },
+  "dependencies": {
+    "mocha": "^8.4.0",
+    "supertest": "^6.2.2"
+  }
+}
