@@ -18,4 +18,24 @@ describe("API Suite test", () => {
       assert.deepStrictEqual(response.text, "Hello World");
     });
   });
+
+  describe("/login", () => {
+    it("should login successfully and return HTTP status 200", async () => {
+      const response = await request(app)
+        .post("/login")
+        .send({ username: "gwelter", password: "123" })
+        .expect(200);
+
+      assert.deepStrictEqual(response.text, "login successful");
+    });
+
+    it("should fail and return HTTP status 401 with wrong credentials", async () => {
+      const response = await request(app)
+        .post("/login")
+        .send({ username: "gwelter", password: "wrong" })
+        .expect(401);
+
+      assert.deepStrictEqual(response.text, "unauthorized");
+    });
+  });
 });
